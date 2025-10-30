@@ -77,10 +77,17 @@ class Pipeline:
         self._empty_folder(recent_dir)
         return img_caption_pair
         
-    def generate_embedding_captions(img_caption_pair : dict):
+    def generate_embedding(img_caption_pair : dict):
         """Loads the clip model and generates embedding"""
         embeddings = {}
         for img_name, captions in img_caption_pair.items():
+            pass
+        pass
+    
+    def push_embedding():
+        pass
+    
+    
             
         
             
