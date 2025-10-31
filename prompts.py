@@ -1,3 +1,15 @@
+CAPTIONING_PROMPT_BETA = """
+Caption this image.
+Return stictly in json format
+
+Example of reponse:
+{
+  captions : [ list of most appropriate captions for the given image] 
+}
+
+GUIDELINES
+For a given image at max you can go for 5 captions
+"""
 CAPTIONING_PROMPT = """
 You are an expert image analysis assistant. Analyze the provided image and generate multiple short, descriptive captions in JSON format.
 

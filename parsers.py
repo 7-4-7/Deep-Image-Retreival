@@ -1,10 +1,12 @@
 import json
 import re
 
-def json_parser(json_str, current, total_images):
+def json_parser(json_str):
     try:
-        print("========="*5,"CAPTION RESPONSE [",current,"/", total_images,"] PARSED", "========="*5)
-        data = json.loads(json_str)
-        return data    
-    except:
-        print("ERROR HAPPENED")
+        cleaned = re.sub(r"^```[a-zA-Z]*\n?|```$", "", json_str.strip())
+        data = json.loads(cleaned)
+        return data
+    except Exception as e:
+        print("ERROR HAPPENED:", e)
+        print("Raw text was:\n", json_str)
+        return None

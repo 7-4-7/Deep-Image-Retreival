@@ -6,3 +6,8 @@ pillow
 python-multipart
 torch
 transformers
+colorlog
+pinecone
+protobuf
+googleapis-common-protos
+grpcio
