@@ -1,29 +1,8 @@
 import logging
-import colorlog
 from pathlib import Path
 from PIL import Image
 
 from helpers import push_to_pinecone, save_locally, save_s3, load_captioning_model, perform_captioning, move_files, call_clip_model
-
-handler = colorlog.StreamHandler()
-
-formatter = colorlog.ColoredFormatter(
-    "%(log_color)s%(asctime)s - %(levelname)s - %(message)s",
-    datefmt="%H:%M:%S",
-    log_colors={
-        "DEBUG":    "cyan",
-        "INFO":     "green",
-        "WARNING":  "yellow",
-        "ERROR":    "red",
-        "CRITICAL": "bold_red,bg_white",
-    }
-)
-handler.setFormatter(formatter)
-
-logger = colorlog.getLogger()
-logger.addHandler(handler)
-logger.setLevel(logging.INFO)
-
 
 class UploadPipeline:
     def  __init__(self, temp_store_dir, persist_dir):
@@ -66,8 +45,8 @@ class UploadPipeline:
         logging.info(f"Generated captions for {len(img_caption_pairs)} images")
         
         logging.info("Emptying recent dir")
-        move_files(self.temp_dir, persist_dir)
-        logging.info(f"Moved files from {self.temp_dir} to {persist_dir}")
+        move_files(self.temp_dir, self.persist_dir)
+        logging.info(f"Moved files from {self.temp_dir} to {self.persist_dir}")
         
         logging.info("Terminating Captioning Process")
         return img_caption_pairs
@@ -117,9 +96,9 @@ class UploadPipeline:
         
         try:
             push_to_pinecone(img_caption_emb_pairs)
-            logging.info("✅ Successfully pushed vectors to Pinecone")
+            logging.info("Successfully pushed vectors to Pinecone")
         except Exception as e:
-            logging.error(f"❌ Exception Happened: {e}")
+            logging.error(f"Exception Happened: {e}")
             logging.error(f"Exception type: {type(e).__name__}")
             import traceback
             logging.debug("Full traceback:")
@@ -133,26 +112,26 @@ class UploadPipeline:
 # image_caption_emb_pairs = p.run_emebedding_model(image_caption_pairs)
 # print(image_caption_emb_pairs)
 
-logging.info("="*60)
-logging.info("Starting Upload Pipeline")
-logging.info("="*60)
+# logging.info("="*60)
+# logging.info("Starting Upload Pipeline")
+# logging.info("="*60)
 
-temp_dir = Path("photos/recent")
-persist_dir = Path("photos/all")
+# temp_dir = Path("photos/recent")
+# persist_dir = Path("photos/all")
 
-p = UploadPipeline(temp_dir, persist_dir)
+# p = UploadPipeline(temp_dir, persist_dir)
 
-logging.info("Step 1: Running captioning model")
-image_caption_pairs = p.run_captioning_model()
-logging.info(f"Captioning complete. Results: {len(image_caption_pairs)} pairs")
+# logging.info("Step 1: Running captioning model")
+# image_caption_pairs = p.run_captioning_model()
+# logging.info(f"Captioning complete. Results: {len(image_caption_pairs)} pairs")
 
-logging.info("Step 2: Running embedding model")
-image_caption_emb_pairs = p.run_emebedding_model(image_caption_pairs)
-logging.info(f"Embedding complete. Results: {len(image_caption_emb_pairs)} pairs")
+# logging.info("Step 2: Running embedding model")
+# image_caption_emb_pairs = p.run_emebedding_model(image_caption_pairs)
+# logging.info(f"Embedding complete. Results: {len(image_caption_emb_pairs)} pairs")
 
-logging.info("Step 3: Pushing to vector database")
-p.push_to_vector_db(image_caption_emb_pairs)
+# logging.info("Step 3: Pushing to vector database")
+# p.push_to_vector_db(image_caption_emb_pairs)
 
-logging.info("="*60)
-logging.info("Upload Pipeline Complete")
-logging.info("="*60)
+# logging.info("="*60)
+# logging.info("Upload Pipeline Complete")
+# logging.info("="*60)
