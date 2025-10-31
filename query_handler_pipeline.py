@@ -31,8 +31,10 @@ class QueryHandler:
         """Retrieves top k records from pinecone db"""
         result = get_topk_records(q_emb)['matches'] 
         images_to_show_list = []
+        # print(result)
         for entry in result:
             images_to_show_list.append(entry['metadata']['image_path'])
+        print(images_to_show_list)
         return images_to_show_list
         
         

@@ -90,7 +90,7 @@ def get_topk_records(q_emb):
     matches = index.query(
                     namespace="__default__",
                     vector=q_emb, 
-                    top_k=3,
+                    top_k=5,
                     include_metadata=True,
                     include_values=False
                 )

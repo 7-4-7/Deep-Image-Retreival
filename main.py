@@ -1,4 +1,7 @@
 from fastapi import FastAPI, Request, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+
 from pathlib import Path
 from typing import List
 
@@ -7,6 +10,11 @@ from query_handler_pipeline import QueryHandler
 
 import logging
 import colorlog
+
+from pydantic import BaseModel
+
+class SearchRequest(BaseModel):
+    search_phrase: str
 
 
 formatter = colorlog.ColoredFormatter(
@@ -31,6 +39,21 @@ logger.setLevel(logging.INFO)
 
 app = FastAPI()
 
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # origins you want to allow
+    allow_credentials=True,
+    allow_methods=["*"],  # allow all HTTP methods (POST, GET, OPTIONS, etc.)
+    allow_headers=["*"],  # allow all headers (Content-Type, Authorization, etc.)
+)
+app.mount("/photos", StaticFiles(directory="photos"), name="photos")
 @app.get('/')
 def health_check():
     return {"message" : "alive"}
@@ -66,12 +89,12 @@ async def upload_image(files: List[UploadFile] = File(...)):
     return image_caption_pairs
 
 @app.post('/search-endpoint')
-async def search_endpoint(search_phrase : str):
+async def search_endpoint(search_phrase : SearchRequest):
     """Endpoint that receives search text and performs operation on it"""
     # payload = await request.json()
     # search_phrase = payload['search_phrase']
     q = QueryHandler()
-    q_emb = q.generate_clip_embeddings(search_phrase)
+    q_emb = q.generate_clip_embeddings(search_phrase.search_phrase)
     images_to_show = q.retrieve_top_k(q_emb=q_emb, k = 5)
     return {'retreived images' : images_to_show}
     
