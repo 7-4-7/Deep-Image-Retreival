@@ -3,7 +3,7 @@ import os
 import shutil
 from pathlib import Path
 from google import genai
-from config import client, pc, INDEX_NAME
+from config import client, pc, INDEX_NAME, INDEX_HOST
 from prompts import CAPTIONING_PROMPT_BETA
 from parsers import json_parser
 import logging
@@ -84,8 +84,19 @@ def call_clip_model(img_path, img_captions):
     # sim = torch.cosine_similarity(image_embeds, combined_embed)
     # print(sim)
     return combined_embed.squeeze(0)
-        
+   
+def get_topk_records(q_emb):
+    index = pc.Index(host=INDEX_HOST)
+    matches = index.query(
+                    namespace="__default__",
+                    vector=q_emb, 
+                    top_k=3,
+                    include_metadata=True,
+                    include_values=False
+                )
+    return matches
 
+         
 def push_to_pinecone(records):
     index_list = pc.list_indexes()
     existing_names = [idx['name'] for idx in index_list]
