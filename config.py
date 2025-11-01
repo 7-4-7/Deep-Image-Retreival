@@ -13,4 +13,4 @@ pc = Pinecone(api_key=PINECONE_API_KEY)
 INDEX_NAME = "deep-image-retriever"
 INDEX_HOST = "https://deep-image-retriever-wvoooip.svc.aped-4627-b74a.pinecone.io"
 
-
+SECRET_KEY = os.getenv('SECRET_KEY')
